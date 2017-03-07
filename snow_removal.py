@@ -91,6 +91,15 @@ def average_SNR(trimmed_snrvselev):
     avg_snr = float(sum(snr_data)) / max(len(snr_data), 1)
     return avg_snr
 
+def parse_args():
+    '''
+    input:
+    command line args
+
+    output:
+    stn_day = station name and day eg. min00130
+    '''
+
 
 if __name__ == '__main__':
     azimuth = load_data('min00130.azi')
