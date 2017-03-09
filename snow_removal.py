@@ -1,11 +1,14 @@
 '''
 Finds the average SNR for L2 at specified elevation angle.
+
+usage:
+python snow_removal.py elevation_file azimuth
 '''
 
 
 import matplotlib.pyplot as plt
 import numpy as np
-
+import sys
 
 def make_sats():
     '''
@@ -91,7 +94,7 @@ def average_SNR(trimmed_snrvselev):
     avg_snr = float(sum(snr_data)) / max(len(snr_data), 1)
     return avg_snr
 
-def parse_args():
+def parse_args(args):
     '''
     input:
     command line args
@@ -100,11 +103,13 @@ def parse_args():
     stn_day = station name and day eg. min00130
     '''
 
+    return str(args[1])
 
 if __name__ == '__main__':
-    azimuth = load_data('min00130.azi')
-    elev = load_data('min00130.ele')
-    sn2 = load_data('min00130.sn2')
+    stn = parse_args(sys.argv)
+    azimuth = load_data(stn + '.azi')
+    elev = load_data(stn + '.ele')
+    sn2 = load_data(stn + '.sn2')
     snrvselev = combine_snr_elev(elev, sn2, 'G01')
     trimmed_snrvselev = isolate_data(snrvselev, (40.0, 50.0))
     avg_snr = average_SNR(trimmed_snrvselev)
