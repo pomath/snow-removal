@@ -1,13 +1,15 @@
 # Set up stuff
 WORK=`pwd`
+rm -f averages.snr
+touch averages.snr
 TEQC=~/Downloads/teqc
 mkdir plot_files
 cd plot_files
-rm -f averages.snr
-touch averages.snr
+
 years=("2016")
 days=("001" "365")
-
+station="min0"
+echo "# ${station} ${years[@]} ${days[@]}" >> ${WORK}/averages.snr
 for yr in ${years[@]}; do
     for d in `seq ${days[0]} ${days[1]}`; do
         d3=`printf "%0.3d" ${d}`

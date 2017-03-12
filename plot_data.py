@@ -3,6 +3,7 @@ from array import array
 x = array('f')
 y = array('f')
 with open('averages.snr') as f:
+    f.readline()
     for line in f:
         tmp = line.split()
         x.append(float(tmp[1]))
