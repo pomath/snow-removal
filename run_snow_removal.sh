@@ -7,11 +7,13 @@ mkdir plot_files 2>/dev/null
 cd plot_files
 
 years=("2016")
-days=("001")
+days=("001" "365")
 station="min0"
 echo "# ${station} ${years[@]} ${days[@]}" >> ${WORK}/averages.snr
 for yr in ${years[@]}; do
     for d in `seq ${days[0]} ${days[1]}`; do
+        prog=$(python -c "print('{:4.4}'.format(${d}/${days[1]}*100))")
+        echo -ne "      ${prog}\r"
         d3=`printf "%0.3d" ${d}`
         mkdir "${yr}_${d3}" 2>/dev/null
         cd ${yr}_${d3}
