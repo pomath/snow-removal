@@ -3,7 +3,7 @@ WORK=`pwd`
 rm -f averages.snr
 touch averages.snr
 TEQC=teqc
-mkdir plot_files
+mkdir plot_files 2>/dev/null
 cd plot_files
 
 years=("2016")
@@ -13,7 +13,7 @@ echo "# ${station} ${years[@]} ${days[@]}" >> ${WORK}/averages.snr
 for yr in ${years[@]}; do
     for d in `seq ${days[0]} ${days[1]}`; do
         d3=`printf "%0.3d" ${d}`
-        mkdir "${yr}_${d3}"
+        mkdir "${yr}_${d3}" 2>/dev/null
         cd ${yr}_${d3}
         cp ${WORK}/DATA/*${d3}0.${yr: 2:4}o.Z .
         cp ${WORK}/DATA/*${d3}0.${yr: 2:4}n.Z .
