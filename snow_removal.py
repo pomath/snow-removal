@@ -50,7 +50,7 @@ def load_data(data_file):
     return data
 
 
-def combine_snr_elev(elev, sn2, stn):
+def combine_snr_elev(elev, sn2):
     '''
     inputs:
     elev = dict with 2d array of [time, elevation]
@@ -60,7 +60,9 @@ def combine_snr_elev(elev, sn2, stn):
     output:
     snrvselev = array with [elev, sn2]
     '''
-    snrvselev = [(x[1], y[1]) for x, y in zip(elev[stn], sn2[stn])]
+    snrvselev = dict([])
+    for key in elev:
+        snrvselev[key] = [(x[1], y[1]) for x, y in zip(elev[key], sn2[key])]
     return snrvselev
 
 
@@ -75,8 +77,10 @@ def isolate_data(snrvselev, elev_range):
     output:
     trimmed_snrvselev = list with (elevation, snr) between elev range.
     '''
-    trimmed_snrvselev = [x for x in snrvselev 
-                         if elev_range[0] <= x[0] <= elev_range[1]]
+    trimmed_snrvselev = dict([])
+    for key in snrvselev:
+        trimmed_snrvselev[key] = [x for x in snrvselev[key] 
+                             if elev_range[0] <= x[0] <= elev_range[1]]
     return trimmed_snrvselev
 
 
@@ -90,7 +94,10 @@ def average_SNR(trimmed_snrvselev):
     output:
     avg_snr = averaged snr data
     '''
-    snr_data = [x[1] for x in trimmed_snrvselev]
+    
+    snr_data = list([])
+    for key in trimmed_snrvselev:
+        snr_data.extend([x[1] for x in trimmed_snrvselev[key]])
     avg_snr = float(sum(snr_data)) / max(len(snr_data), 1)
     return avg_snr
 
@@ -110,7 +117,7 @@ if __name__ == '__main__':
     azimuth = load_data(stn + '.azi')
     elev = load_data(stn + '.ele')
     sn2 = load_data(stn + '.sn2')
-    snrvselev = combine_snr_elev(elev, sn2, 'G01')
+    snrvselev = combine_snr_elev(elev, sn2)
     trimmed_snrvselev = isolate_data(snrvselev, (40.0, 50.0))
     avg_snr = average_SNR(trimmed_snrvselev)
     print(avg_snr)

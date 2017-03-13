@@ -2,12 +2,12 @@
 WORK=`pwd`
 rm -f averages.snr
 touch averages.snr
-TEQC=~/Downloads/teqc
+TEQC=teqc
 mkdir plot_files
 cd plot_files
 
 years=("2016")
-days=("001" "365")
+days=("001")
 station="min0"
 echo "# ${station} ${years[@]} ${days[@]}" >> ${WORK}/averages.snr
 for yr in ${years[@]}; do
@@ -18,7 +18,7 @@ for yr in ${years[@]}; do
         cp ${WORK}/DATA/*${d3}0.${yr: 2:4}o.Z .
         cp ${WORK}/DATA/*${d3}0.${yr: 2:4}n.Z .
         gzip -df *.Z
-        ${TEQC} +qcq +plot *o
+        ${TEQC} +qcq +plot *o > /dev/null 2>&1
         rm -f *.m12
         rm -f *.m21
         rm -f *.i12
