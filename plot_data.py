@@ -11,5 +11,8 @@ with open('averages.snr') as f:
 
 plt.plot(x,y)
 ax = plt.gca()
+plt.xlabel('DOY')
+plt.ylabel('SNR')
+plt.title(r'MIN0 2016 $40^{\circ} - 50^{\circ}$ Average L2 SNR')
 plt.xlim(0, 365)
 plt.savefig('averages.png')
