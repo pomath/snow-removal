@@ -120,4 +120,4 @@ if __name__ == '__main__':
     snrvselev = combine_snr_elev(elev, sn2)
     trimmed_snrvselev = isolate_data(snrvselev, (40.0, 50.0))
     avg_snr = average_SNR(trimmed_snrvselev)
-    print(avg_snr)
+    print('{:4.4}'.format(avg_snr))
