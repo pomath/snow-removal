@@ -2,7 +2,7 @@ WORK=`pwd`
 mkdir DATA
 cd DATA
 years=("2016")
-days=("001")
+days=("001" "365")
 station="min0"
 for yr in ${years[@]}; do
     for d in `seq ${days[0]} ${days[1]}`; do

@@ -2,7 +2,8 @@
 WORK=`pwd`
 rm -f averages.snr
 touch averages.snr
-TEQC=teqc
+TEQC=./teqc
+CRX2RNX=./CRX2RNX
 mkdir plot_files 2>/dev/null
 cd plot_files
 

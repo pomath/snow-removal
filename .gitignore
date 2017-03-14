@@ -91,3 +91,5 @@ ENV/
 # Other
 DATA/
 plot_files/
+*.snr
+*.png
