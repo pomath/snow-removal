@@ -93,3 +93,4 @@ DATA/
 plot_files/
 *.snr
 *.png
+*.eps

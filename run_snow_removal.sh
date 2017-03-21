@@ -25,7 +25,7 @@ for yr in  `seq ${years[0]} ${years[1]}`; do
         rm -f *.m21
         rm -f *.i12
         rm -f *.d12
-        data=`python ${WORK}/snow_removal.py "min0${d3}0"`
+        data=`python3 ${WORK}/snow_removal.py "min0${d3}0"`
         if [ $? == 0 ]; then
             echo ${yr} ${d3} ${data} >> ${WORK}/averages.snr
         fi
