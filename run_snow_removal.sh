@@ -7,8 +7,8 @@ CRX2RNX=${WORK}/CRX2RNX
 mkdir plot_files 2>/dev/null
 cd plot_files
 
-years=("2016")
-days=("001" "002")
+years=("2008" "2016")
+days=("001" "365")
 station="min0"
 echo "# ${station} ${years[@]} ${days[@]}" >> ${WORK}/averages.snr
 for yr in ${years[@]}; do
