@@ -11,14 +11,14 @@ years=("2008" "2016")
 days=("001" "365")
 station="min0"
 echo "# ${station} ${years[@]} ${days[@]}" >> ${WORK}/averages.snr
-for yr in ${years[@]}; do
+for yr in  `seq ${years[0]} ${years[1]}`; do
     for d in `seq ${days[0]} ${days[1]}`; do
         d3=`printf "%0.3d" ${d}`
         mkdir "${yr}_${d3}" 2>/dev/null
         cd ${yr}_${d3}
         cp ${WORK}/DATA/*${d3}0.${yr: 2:4}d.Z .
         cp ${WORK}/DATA/*${d3}0.${yr: 2:4}n.Z .
-        gzip -df *.Z
+        \gzip -df -f  *.Z
         ${CRX2RNX} *d
         ${TEQC} +qcq +plot *o > /dev/null 2>&1
         rm -f *.m12
