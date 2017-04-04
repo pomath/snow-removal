@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
-from array import array
+import numpy as np
 import datetime
 
 x = []
-y = array('f')
+y = np.array([])
+stdev = np.array([])
 with open('averages.snr') as f:
     head = f.readline().split()
     startday = datetime.date(int(head[2]),1,int(head[4]))
@@ -12,9 +13,14 @@ with open('averages.snr') as f:
         tmp = line.split()
         days2add = 365 * (int(tmp[0]) - startday.year) + int(tmp[1])
         x.append(startday + datetime.timedelta(days2add))
-        y.append(float(tmp[2]))
+        y = np.append(y, (float(tmp[2])))
+        stdev = np.append(stdev, float(tmp[3]))
 
-plt.plot(x,y)
+samp = 1
+plt.plot(x[::samp],y[::samp])
+
+plt.plot(x[::samp], (y-stdev)[::samp], '--')
+plt.plot(x[::samp], (y+stdev)[::samp], '--')
 ax = plt.gca()
 plt.xlabel('DOY')
 plt.ylabel('SNR')

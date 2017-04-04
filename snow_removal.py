@@ -5,119 +5,83 @@ usage:
 python snow_removal.py elevation_file azimuth
 '''
 
-
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
-
-def make_sats():
+from GPSData import GPSData
+import subprocess
+class snowyPrep:
     '''
-    Creates an empty dictionary for each GPS satellite.
     '''
-    data = dict([])
-    allsats = ['G{:02}'.format(num) for num in range(1, 33)]
-    for sat in allsats:
-        data[sat] = []
-    return data
+    __slots__ = ['rawFP', 'zipFP', 'obsFP',
+                 'runTEQC', 'runCRX2RNX']
+
+    def __init__(self, station='min0', date='2008_001',
+                 path='plot_files/'):
+        self.rawFP = (path + date + '/' +
+                       station + date[-3:] +
+                       '0.' + date[2:4])
+        self.zipFP = self.rawFP + 'd.Z'
+        self.zipFP = self.rawFP + 'o'
+
+    def TEQC(self):
+        '''
+        '''
+        self.runTEQC = subprocess.run(["./teqc"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+    def CRX2RNX(self):
+        '''
+        '''
+        self.runCRX2RNX = subprocess.run(["./CRX2RNX"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+    def failed(self):
+        if self.runCRX2RNX.returncode or self.runTEQC.returncode:
+            print('Prep failed for ' + self.rawFP)
 
 
-def load_data(data_file):
+class snowyStation(GPSData):
     '''
-    input:
-    data_file = *.sn1/sn2/ele/azi
-
-    output:
-    data = dict with times and values for each satellite.
     '''
-    data = make_sats()
-    with open(data_file, 'r') as f:
-        f.readline()
-        hdr = f.readline()
-        # read 2 lines
-        for line1 in f:
-            line2 = next(f)
-            tmp1 = line1.split()
-            tmp2 = line2.split()
-            nsats = int(tmp1[1])
-            if nsats != -1:
-                sats = tmp1[2:]
-            else:
-                sats = sats
-                nsats = len(sats)
-            # parse the stations and append data
-            for nrec in range(nsats):
-                data[sats[nrec]].append([float(tmp1[0]), float(tmp2[nrec])])
-    return data
+    __slots__ = ['SNRvsElev', 'plotFP', 'azimuth',
+                 'elevation', 'SNR', 'SATS',
+                 'eleRange', 'avgSNR', 'stdSNR']
 
+    def __str__(self):
+        return '{:.4}'.format(self.avgSNR)
 
-def combine_snr_elev(elev, sn2):
-    '''
-    inputs:
-    elev = dict with 2d array of [time, elevation]
-    sn2 = dict with 2d array of [time, sn2]
-    stn = string with sattelite name
+    def __repr__(self):
+        return '{:.4}'.format(self.avgSNR)
 
-    output:
-    snrvselev = array with [elev, sn2]
-    '''
-    snrvselev = dict([])
-    for key in elev:
-        snrvselev[key] = [(x[1], y[1]) for x, y in zip(elev[key], sn2[key])]
-    return snrvselev
+    def __init__(self, station='min0', date='2008_001',
+                 path='plot_files/'):
+        self.SNRvsElev = dict([])
+        self.plotFP = path + date + '/' + station + date[-3:] + '0'
+        self.azimuth = GPSData(self.plotFP + '.azi').data
+        self.elevation = GPSData(self.plotFP + '.ele').data
+        self.SNR = GPSData(self.plotFP + '.sn2').data
+        self.SATS = [key for key in self.elevation]
+        self.eleRange = [40, 50]
+        self.combineSNRElev()
+        self.isolateData()
 
+    def combineSNRElev(self):
+        for key in self.SATS:
+            self.SNRvsElev[key] = [(x[1], y[1]) for x, y in zip(self.elevation[key], self.SNR[key])]
 
-def isolate_data(snrvselev, elev_range):
-    '''
-    Isolates the data between certain values of elevation for averaging
+    def isolateData(self):
+        trimmed_snrvselev = dict([])
+        snr_data = np.array([])
+        for key in self.SATS:
+            trimmed_snrvselev[key] = [x for x in self.SNRvsElev[key]
+                                      if self.eleRange[0] <= x[0] <= self.eleRange[1]]
+        for key in self.SATS:
+            snr_data = np.append(snr_data, [x[1] for x in trimmed_snrvselev[key]])
+        self.avgSNR = float(sum(snr_data)) / max(len(snr_data), 1)
+        self.stdSNR = np.std(snr_data)
 
-    input:
-    snrvselev = list with (elevation, snr)
-    elev_range = tuple with (low elevation, high elevation)
-
-    output:
-    trimmed_snrvselev = list with (elevation, snr) between elev range.
-    '''
-    trimmed_snrvselev = dict([])
-    for key in snrvselev:
-        trimmed_snrvselev[key] = [x for x in snrvselev[key] 
-                             if elev_range[0] <= x[0] <= elev_range[1]]
-    return trimmed_snrvselev
-
-
-def average_SNR(trimmed_snrvselev):
-    '''
-    Averages the SNR data
-
-    input:
-    trimmed_snrvselev = snr data between a certain range of elevation.
-
-    output:
-    avg_snr = averaged snr data
-    '''
-    
-    snr_data = list([])
-    for key in trimmed_snrvselev:
-        snr_data.extend([x[1] for x in trimmed_snrvselev[key]])
-    avg_snr = float(sum(snr_data)) / max(len(snr_data), 1)
-    return avg_snr
-
-def parse_args(args):
-    '''
-    input:
-    command line args
-
-    output:
-    stn_day = station name and day eg. min00130
-    '''
-
-    return str(args[1])
 
 if __name__ == '__main__':
-    stn = parse_args(sys.argv)
-    azimuth = load_data(stn + '.azi')
-    elev = load_data(stn + '.ele')
-    sn2 = load_data(stn + '.sn2')
-    snrvselev = combine_snr_elev(elev, sn2)
-    trimmed_snrvselev = isolate_data(snrvselev, (40.0, 50.0))
-    avg_snr = average_SNR(trimmed_snrvselev)
-    print('{:4.4}'.format(avg_snr))
+    '''
+    '''
+    test = snowyStation('min0', sys.argv[1], './plot_files/')
+    print(test, test.stdSNR)
