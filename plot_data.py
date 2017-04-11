@@ -20,21 +20,34 @@ newstart = datetime.date(2009, 2, 1)
 newind = x.index(newstart)
 
 
+x_ = np.arange(0, len(y), 1)
 y = y[newind:]
 x = x[newind:]
-yearrange = (x[0].year, x[-1].year)
-
-summers = [(datetime.date(yr, 12, 1), datetime.date(yr+1, 3, 1)) for yr in range(yearrange[0] - 1, yearrange[1] + 1)]
-print(summers)
-
-x_ = np.arange(0, len(y), 1)
+x_= x_[newind:]
 p = np.poly1d(np.polyfit(x_, y, 2))
-plt.scatter(x,y, s=0.5)
-plt.plot(x, p(x_))
+yearrange = (x[0].year, x[-1].year)
+summers = [(datetime.date(yr, 12, 1), datetime.date(yr+1, 3, 1)) for yr in range(yearrange[0] - 1, yearrange[1] + 1)]
+for summ in summers:
+    if summ[0] not in x:
+        ind1 = 0
+        ind2 = x.index(summ[1])
+    elif summ[1] not in x:
+        ind1 = x.index(summ[0])
+        ind2 = len(x) -1
+    else:
+        ind1 = x.index(summ[0])
+        ind2 = x.index(summ[1])
+    winter, = plt.plot(x[ind1:ind2], np.ones((ind2-ind1,)) * min(y[ind1:ind2]), 'r-')
+dt = x[0] - datetime.date(x[0].year, 1, 1)
+
+phaseShift = np.pi / (dt.days)
+avgSNR = plt.scatter(x,y, s=0.5)
+fit, = plt.plot(x, p(x_) -np.cos(2 * np.pi * x_ / 365))
 ax = plt.gca()
-plt.xlabel('DOY')
+plt.xlabel('Date')
 plt.ylabel('SNR')
 plt.title(r'MIN0 $40^{\circ} - 50^{\circ}$ Average L2 SNR')
 ax.set_xlim([x[0], x[-1]])
-plt.show()
-#plt.savefig('averages.eps', format='eps', dpi=1000)
+ax.set_ylim([37.5, 41])
+plt.legend([avgSNR, fit, winter], ['Average SNR', 'Fit', 'Summer Min'], loc='best')
+plt.savefig('averages.eps', format='eps', dpi=1000)

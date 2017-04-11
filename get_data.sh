@@ -1,9 +1,9 @@
 WORK=`pwd`
 mkdir DATA
 cd DATA
-years=("2008" "2016")
+years=("2013" "2016")
 days=("001" "365")
-station="min0"
+station="rob4"
 for yr in `seq ${years[0]} ${years[1]}`; do
     for d in `seq ${days[0]} ${days[1]}`; do
         d3=`printf "%0.3d" ${d}`
