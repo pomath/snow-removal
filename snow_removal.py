@@ -9,35 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 from GPSData import GPSData
-import subprocess
-class snowyPrep:
-    '''
-    '''
-    __slots__ = ['rawFP', 'zipFP', 'obsFP',
-                 'runTEQC', 'runCRX2RNX']
-
-    def __init__(self, station='min0', date='2008_001',
-                 path='plot_files/'):
-        self.rawFP = (path + date + '/' +
-                       station + date[-3:] +
-                       '0.' + date[2:4])
-        self.zipFP = self.rawFP + 'd.Z'
-        self.zipFP = self.rawFP + 'o'
-
-    def TEQC(self):
-        '''
-        '''
-        self.runTEQC = subprocess.run(["./teqc"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-    def CRX2RNX(self):
-        '''
-        '''
-        self.runCRX2RNX = subprocess.run(["./CRX2RNX"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-    def failed(self):
-        if self.runCRX2RNX.returncode or self.runTEQC.returncode:
-            print('Prep failed for ' + self.rawFP)
-
+import pickle
 
 class snowyStation(GPSData):
     '''
@@ -60,7 +32,7 @@ class snowyStation(GPSData):
         self.elevation = GPSData(self.plotFP + '.ele').data
         self.SNR = GPSData(self.plotFP + '.sn2').data
         self.SATS = [key for key in self.elevation]
-        self.eleRange = [40, 50]
+        self.eleRange = (40, 50)
         self.combineSNRElev()
         self.isolateData()
 

@@ -14,15 +14,27 @@ with open('averages.snr') as f:
         days2add = 365 * (int(tmp[0]) - startday.year) + int(tmp[1])
         x.append(startday + datetime.timedelta(days2add))
         y = np.append(y, (float(tmp[2])))
-        stdev = np.append(stdev, float(tmp[3]))
+        stdev = np.append(stdev, abs(float(tmp[3])))
 
-samp = 1
-plt.plot(x[::samp],y[::samp])
+newstart = datetime.date(2009, 2, 1)
+newind = x.index(newstart)
 
-plt.plot(x[::samp], (y-stdev)[::samp], '--')
-plt.plot(x[::samp], (y+stdev)[::samp], '--')
+
+y = y[newind:]
+x = x[newind:]
+yearrange = (x[0].year, x[-1].year)
+
+summers = [(datetime.date(yr, 12, 1), datetime.date(yr+1, 3, 1)) for yr in range(yearrange[0] - 1, yearrange[1] + 1)]
+print(summers)
+
+x_ = np.arange(0, len(y), 1)
+p = np.poly1d(np.polyfit(x_, y, 2))
+plt.scatter(x,y, s=0.5)
+plt.plot(x, p(x_))
 ax = plt.gca()
 plt.xlabel('DOY')
 plt.ylabel('SNR')
 plt.title(r'MIN0 $40^{\circ} - 50^{\circ}$ Average L2 SNR')
-plt.savefig('averages.eps', format='eps', dpi=1000)
+ax.set_xlim([x[0], x[-1]])
+plt.show()
+#plt.savefig('averages.eps', format='eps', dpi=1000)
