@@ -10,7 +10,7 @@ for yr in `seq ${years[0]} ${years[1]}`; do
         if [ ! -e "${station}${d3}0.${yr: 2:2}d.Z" ]; then
             wget ftp://data-out.unavco.org/pub/rinex/obs/${yr}/${d3}/${station}*d.Z
         fi
-        
+
         if [ ! -e "${station}${d3}0.${yr: 2:2}n.Z" ]; then
             wget ftp://data-out.unavco.org/pub/rinex/nav/${yr}/${d3}/${station}*n.Z
         fi
