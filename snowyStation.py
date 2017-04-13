@@ -8,15 +8,16 @@ python snow_removal.py elevation_file azimuth
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
-from GPSData import GPSData
+from snowyData import snowyData
+from snowyPrep import snowyPrep
 
-
-class snowyStation(GPSData):
+class snowyStation(snowyData):
     '''
     '''
     __slots__ = ['SNRvsElev', 'plotFP', 'azimuth',
                  'elevation', 'SNR', 'SATS',
-                 'eleRange', 'avgSNR', 'stdSNR']
+                 'eleRange', 'avgSNR', 'stdSNR',
+                 'args']
 
     def __str__(self):
         return '{:.4}'.format(self.avgSNR)
@@ -26,11 +27,14 @@ class snowyStation(GPSData):
 
     def __init__(self, station='min0', date='2008_001',
                  path='plot_files/'):
+        self.args = (station, date, path)
+        prep = snowyPrep(*self.args)
         self.SNRvsElev = dict([])
-        self.plotFP = path + date + '/' + station + date[-3:] + '0'
-        self.azimuth = GPSData(self.plotFP + '.azi').data
-        self.elevation = GPSData(self.plotFP + '.ele').data
-        self.SNR = GPSData(self.plotFP + '.sn2').data
+        self.plotFP = path + station + date[-3:] + '0'
+        self.azimuth = snowyData(self.plotFP + '.azi').data
+        self.elevation = snowyData(self.plotFP + '.ele').data
+        self.SNR = snowyData(self.plotFP + '.sn2').data
+        prep.removeOthers()
         self.SATS = [key for key in self.elevation]
         self.eleRange = (40, 50)
         self.combineSNRElev()

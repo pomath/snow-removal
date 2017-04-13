@@ -11,6 +11,6 @@ if __name__ == '__main__':
              ('rob4', '2013_002', 'test/'),
              ('rob4', '2013_003', 'test/'),
              ('rob4', '2013_004', 'test/')]
-    snowyPrep(*files[0])
-#    with Pool(6) as p:
-#        p.starmap(snowyPrep, files)
+    #snowyStation(*files[0])
+    with Pool(6) as p:
+        p.starmap(snowyStation, files)

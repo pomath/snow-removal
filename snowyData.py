@@ -11,7 +11,7 @@ class snowyData:
     def __init__(self, dataFile):
         self.dataFile = dataFile
         self.prefix = self.dataFile[:-12]
-        self.saveName = self.prefix + self.dataFile[-12:-4] + '.pickle'
+        self.saveName = self.prefix + self.dataFile[-12:-4] + self.dataFile[-3:] + '.pickle'
         self.data = self.makeSats
         self.fileExists(self.saveName)
         if self.found.returncode == 0:
