@@ -31,15 +31,17 @@ class snowyStation(snowyData):
         prep = snowyPrep(*self.args)
         self.SNRvsElev = dict([])
         self.plotFP = path + station + date[-3:] + '0'
-        self.azimuth = snowyData(self.plotFP + '.azi').data
-        self.elevation = snowyData(self.plotFP + '.ele').data
-        self.SNR = snowyData(self.plotFP + '.sn2').data
-        prep.removeOthers()
-        self.SATS = [key for key in self.elevation]
-        self.eleRange = (40, 50)
-        self.combineSNRElev()
-        self.isolateData()
-        print(self.avgSNR)
+        try:
+            self.azimuth = snowyData(self.plotFP + '.azi').data
+            self.elevation = snowyData(self.plotFP + '.ele').data
+            self.SNR = snowyData(self.plotFP + '.sn2').data
+            prep.removeOthers()
+            self.SATS = [key for key in self.elevation]
+            self.eleRange = (40, 50)
+            self.combineSNRElev()
+            self.isolateData()
+        except Exception:
+            print('Did not find', self.plotFP)
 
     def combineSNRElev(self):
         for key in self.SATS:

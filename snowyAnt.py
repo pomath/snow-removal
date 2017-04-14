@@ -4,13 +4,18 @@
 from multiprocessing import Pool
 from snowyPrep import snowyPrep
 from snowyStation import snowyStation
+import numpy as np
 
 
 if __name__ == '__main__':
-    files = [('rob4', '2013_001', 'test/'),
-             ('rob4', '2013_002', 'test/'),
-             ('rob4', '2013_003', 'test/'),
-             ('rob4', '2013_004', 'test/')]
-    #snowyStation(*files[0])
+    station = 'rob4'
+    year = '2016'
+    path = 'DATA/' + year + '/'
+    days = list(range(1, 6))
+    days = ['{:03}'.format(x) for x in days]
+    files = [(station, year + '_' + d, path) for d in days]
+    
     with Pool(6) as p:
-        p.starmap(snowyStation, files)
+        results = p.starmap(snowyStation, files)
+
+
