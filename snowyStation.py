@@ -10,6 +10,8 @@ import numpy as np
 import sys
 from snowyData import snowyData
 from snowyPrep import snowyPrep
+import datetime
+
 
 class snowyStation(snowyData):
     '''
@@ -17,7 +19,7 @@ class snowyStation(snowyData):
     __slots__ = ['SNRvsElev', 'plotFP', 'azimuth',
                  'elevation', 'SNR', 'SATS',
                  'eleRange', 'avgSNR', 'stdSNR',
-                 'args']
+                 'args', 'date']
 
     def __str__(self):
         return '{:.4}'.format(self.avgSNR)
@@ -31,6 +33,11 @@ class snowyStation(snowyData):
         prep = snowyPrep(*self.args)
         self.SNRvsElev = dict([])
         self.plotFP = path + station + date[-3:] + '0'
+        d = date.replace('_', ' ').split()
+        year = datetime.date(int(d[0]), 1, 1)
+        days2add = datetime.timedelta(int(d[1]) - 1)
+        self.date = year + days2add
+        
         try:
             self.azimuth = snowyData(self.plotFP + '.azi').data
             self.elevation = snowyData(self.plotFP + '.ele').data
@@ -42,6 +49,7 @@ class snowyStation(snowyData):
             self.isolateData()
         except Exception:
             print('Did not find', self.plotFP)
+            self.avgSNR = -1
 
     def combineSNRElev(self):
         for key in self.SATS:

@@ -3,7 +3,7 @@ mkdir DATA
 cd DATA
 years=("2013" "2016")
 days=("001" "365")
-station="rob4"
+station="uthw"
 for yr in `seq ${years[0]} ${years[1]}`; do
     for d in `seq ${days[0]} ${days[1]}`; do
         d3=`printf "%0.3d" ${d}`
