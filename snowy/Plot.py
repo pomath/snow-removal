@@ -59,7 +59,8 @@ class Plot:
         for summ in summers:
             ind1 = x.index(nearest(x, summ[0]))
             ind2 = x.index(nearest(x, summ[1]))
-            winter, = plt.plot(x[ind1:ind2], np.ones((ind2-ind1,)) * min(y[ind1:ind2]), 'r-')
+            if y[ind1:ind2]:
+                winter, = plt.plot(x[ind1:ind2], np.ones((ind2-ind1,)) * min(y[ind1:ind2]), 'r-')
 
     def plotIt(self):
         '''
