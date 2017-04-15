@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import datetime
 
-class snowyPlot:
+class Plot:
     '''
     '''
     __slots__ = ['x', 'y', 'name']

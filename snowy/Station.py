@@ -8,12 +8,12 @@ python snow_removal.py elevation_file azimuth
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
-from snowyData import snowyData
-from snowyPrep import snowyPrep
+from .Data import Data
+from .Prep import Prep
 import datetime
 
 
-class snowyStation(snowyData):
+class Station(Data):
     '''
     '''
     __slots__ = ['SNRvsElev', 'plotFP', 'azimuth',
@@ -30,7 +30,7 @@ class snowyStation(snowyData):
     def __init__(self, station='min0', date='2008_001',
                  path='plot_files/'):
         self.args = (station, date, path)
-        prep = snowyPrep(*self.args)
+        prep = Prep(*self.args)
         self.SNRvsElev = dict([])
         self.plotFP = path + station + date[-3:] + '0'
         d = date.replace('_', ' ').split()
@@ -39,9 +39,9 @@ class snowyStation(snowyData):
         self.date = year + days2add
         
         try:
-            self.azimuth = snowyData(self.plotFP + '.azi').data
-            self.elevation = snowyData(self.plotFP + '.ele').data
-            self.SNR = snowyData(self.plotFP + '.sn2').data
+            self.azimuth = Data(self.plotFP + '.azi').data
+            self.elevation = Data(self.plotFP + '.ele').data
+            self.SNR = Data(self.plotFP + '.sn2').data
             prep.removeOthers()
             self.SATS = [key for key in self.elevation]
             self.eleRange = (40, 50)
@@ -49,7 +49,7 @@ class snowyStation(snowyData):
             self.isolateData()
         except Exception:
             print('Did not find', self.plotFP)
-            self.avgSNR = -1
+            self.avgSNR = -1.0
 
     def combineSNRElev(self):
         for key in self.SATS:
@@ -70,5 +70,5 @@ class snowyStation(snowyData):
 if __name__ == '__main__':
     '''
     '''
-    test = snowyStation('min0', sys.argv[1], './plot_files/')
+    test = Station('min0', sys.argv[1], './plot_files/')
     print(test, test.stdSNR)

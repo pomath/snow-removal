@@ -2,7 +2,7 @@ import numpy as np
 import pickle
 import subprocess
 
-class snowyData:
+class Data:
     '''
     '''
     __slots__ = ['data', 'dataFile', 'saveName',
@@ -64,5 +64,5 @@ class snowyData:
             self.data = pickle.load(f)
 
 if __name__ == '__main__':
-    test = snowyData('test/rob40010.azi')
+    test = Data('test/rob40010.azi')
 

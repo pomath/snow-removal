@@ -5,10 +5,10 @@ load into numpy arrays and save as binaries
 '''
 
 import subprocess
-from snowyData import snowyData
+from .Data import Data
 
 
-class snowyPrep:
+class Prep:
     '''
     Used to go from a zipped rinex file to the plot files from TEQC.
     -need to add more checks to make it dummy proof.
@@ -44,10 +44,10 @@ class snowyPrep:
         self.found = subprocess.run(["ls", fileName.encode('ascii')], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
     def CRX2RNX(self):
-        self.runCRX2RNX = subprocess.run(["./CRX2RNX", "-f", self.crxFP], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        self.runCRX2RNX = subprocess.run(["./utils/CRX2RNX", "-f", self.crxFP], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
     def TEQC(self):
-        self.runTEQC = subprocess.run(["./teqc", "+qcq", "+plot", self.obsFP], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        self.runTEQC = subprocess.run(["./utils/teqc", "+qcq", "+plot", self.obsFP], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
     def unzip(self, inputFile):
         self.gzip = subprocess.run(["gzip", "-df", "-k", inputFile])
@@ -96,5 +96,5 @@ class snowyPrep:
             removing = subprocess.run(["rm", "-f", self.rawFP + f], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
 if __name__ == '__main__':
-    test = snowyPrep('rob4', '2013_001', 'test/')
+    test = Prep('rob4', '2013_001', 'test/')
     test.removeOthers()
