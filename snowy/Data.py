@@ -2,8 +2,13 @@ import numpy as np
 import pickle
 import subprocess
 
+
 class Data:
     '''
+    A set of routines that reads in the teqc +plot
+    format into a python data structure.
+    The input is a +plot file, currently there are
+    no guards against reading in a bad file.
     '''
     __slots__ = ['data', 'dataFile', 'saveName',
                  'found', 'prefix']
@@ -11,7 +16,10 @@ class Data:
     def __init__(self, dataFile):
         self.dataFile = dataFile
         self.prefix = self.dataFile[:-12]
-        self.saveName = self.prefix + self.dataFile[-12:-4] + self.dataFile[-3:] + '.pickle'
+        self.saveName = (self.prefix +
+                         self.dataFile[-12:-4] +
+                         self.dataFile[-3:] +
+                         '.pickle')
         self.data = self.makeSats
         self.fileExists(self.saveName)
         if self.found.returncode == 0:
@@ -22,7 +30,9 @@ class Data:
             self.load_data()
 
     def fileExists(self, fileName):
-        self.found = subprocess.run(["ls", fileName.encode('ascii')], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        self.found = subprocess.run(["ls", fileName.encode('ascii')],
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT)
 
     @property
     def makeSats(self):
@@ -36,6 +46,10 @@ class Data:
         return data
 
     def load_data(self):
+        '''
+        Opens up the +plot file and reads line by line
+        updating the epoch and measurement.
+        '''
         with open(self.dataFile, 'r') as f:
             f.readline()
             hdr = f.readline()
@@ -52,7 +66,8 @@ class Data:
                     nsats = len(sats)
                 # parse the stations and append data
                 for nrec in range(nsats):
-                    self.data[sats[nrec]].append([float(tmp1[0]), float(tmp2[nrec])])
+                    self.data[sats[nrec]].append([float(tmp1[0]),
+                                                  float(tmp2[nrec])])
         self.savePickle()
 
     def savePickle(self):
@@ -65,4 +80,3 @@ class Data:
 
 if __name__ == '__main__':
     test = Data('test/rob40010.azi')
-

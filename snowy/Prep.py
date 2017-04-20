@@ -24,8 +24,7 @@ class Prep:
         self._workingDir()
         self.path = self.workPath + '/' + path
         self.prefix = station + date[-3:] + '0'
-        self.rawFP = (self.workPath + '/' + path
-                      +
+        self.rawFP = (self.workPath + '/' + path +
                       station + date[-3:] +
                       '0.' + date[2:4])
         self.zipFP = self.rawFP + 'd.Z'
@@ -36,18 +35,29 @@ class Prep:
         self.runPrep()
 
     def _workingDir(self):
-        self.workPath = subprocess.run(["pwd"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        self.workPath = subprocess.run(["pwd"],
+                                       stdout=subprocess.PIPE,
+                                       stderr=subprocess.STDOUT)
         self.workPath = self.workPath.stdout[:-1]
         self.workPath = self.workPath.decode('ascii')
 
     def fileExists(self, fileName):
-        self.found = subprocess.run(["ls", fileName.encode('ascii')], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        self.found = subprocess.run(["ls",
+                                    fileName.encode('ascii')],
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT)
 
     def CRX2RNX(self):
-        self.runCRX2RNX = subprocess.run(["./utils/CRX2RNX", "-f", self.crxFP], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        self.runCRX2RNX = subprocess.run(["./utils/CRX2RNX", "-f",
+                                         self.crxFP],
+                                         stdout=subprocess.PIPE,
+                                         stderr=subprocess.STDOUT)
 
     def TEQC(self):
-        self.runTEQC = subprocess.run(["./utils/teqc", "+qcq", "+plot", self.obsFP], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        self.runTEQC = subprocess.run(["./utils/teqc", "+qcq", "+plot",
+                                      self.obsFP],
+                                      stdout=subprocess.PIPE,
+                                      stderr=subprocess.STDOUT)
 
     def unzip(self, inputFile):
         self.gzip = subprocess.run(["gzip", "-df", "-k", inputFile])
@@ -90,10 +100,17 @@ class Prep:
             GPSData(self.prefix + f)
 
     def removeOthers(self):
-        for ext in ['.azi', '.ele', '.d12', '.i12', '.m12', '.m21', '.sn1', '.sn2']:
-            removing = subprocess.run(["rm", "-f", self.path + self.prefix + ext], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        for ext in ['.azi', '.ele', '.d12',
+                    '.i12', '.m12', '.m21',
+                    '.sn1', '.sn2']:
+            removing = subprocess.run(["rm", "-f",
+                                      self.path + self.prefix + ext],
+                                      stdout=subprocess.PIPE,
+                                      stderr=subprocess.STDOUT)
         for f in ['d', 'o', 'n']:
-            removing = subprocess.run(["rm", "-f", self.rawFP + f], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            removing = subprocess.run(["rm", "-f", self.rawFP + f],
+                                      stdout=subprocess.PIPE,
+                                      stderr=subprocess.STDOUT)
 
 if __name__ == '__main__':
     test = Prep('rob4', '2013_001', 'test/')

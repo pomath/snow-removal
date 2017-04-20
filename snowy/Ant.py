@@ -9,21 +9,27 @@ import numpy as np
 import pickle
 import os
 
+
 def getSNR(st, yr, pa):
     s = Station(st, yr, pa)
     return [s.date, s.avgSNR]
 
+
 class Ant:
     '''
+    Parallel routine that ties together all the other functions.
+
+    Example usage:
     station = 'uthw'
     year = ['2013', '2014', '2015', '2016']
     path = 'DATA/'
-    days = list(range(1, 365))
+    days = list(range(1, 366))
     '''
     def __init__(self, station, year, path, days):
         days = ['{:03}'.format(x) for x in days]
         savename = station + '.pickle'
-        files = [(station, yr + '_' + d, path + yr + '/')  for yr in year for d in days]
+        files = [(station, yr + '_' + d, path + yr + '/')
+                 for yr in year for d in days]
         if not os.path.isfile(savename):
             print('Creating results list...')
             with Pool(6) as p:

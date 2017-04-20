@@ -4,11 +4,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import datetime
 
+
 class Plot:
     '''
+    Contains the plotting routines for displaying a set of average SNR data
     '''
     __slots__ = ['x', 'y', 'name']
-    
+
     def __init__(self, x, y, name):
         self.x = x
         self.y = y
@@ -16,13 +18,14 @@ class Plot:
 
     def readFile(self):
         '''
+        Old routine when the data was saved in a plain text file.
         '''
         x = []
         y = np.array([])
         stdev = np.array([])
         with open('averages.snr') as f:
             head = f.readline().split()
-            startday = datetime.date(int(head[2]),1,int(head[4]))
+            startday = datetime.date(int(head[2]), 1, int(head[4]))
 
             for line in f:
                 tmp = line.split()
@@ -34,6 +37,7 @@ class Plot:
 
     def shiftStart(self):
         '''
+        Placeholder routine.
         Shifts the starting date to newstart
         newstart = datetime.date(2009, 2, 1)
         newind = 0 #x.index(newstart)
@@ -44,6 +48,7 @@ class Plot:
 
     def plotFit(self):
         '''
+        Finds the 2nd order polynomial fit to the time series.
         '''
         x_ = np.arange(0, len(self.y), 1)
         p = np.poly1d(np.polyfit(x_, self.y, 2))
@@ -51,35 +56,42 @@ class Plot:
 
     def plotSummers(self):
         '''
+        Finds the summer months in the time series,
+        plots a line at the lowest value.
         '''
         x = self.x
         y = self.y
         yearrange = (x[0].year, x[-1].year)
-        summers = [(datetime.date(yr, 12, 1), datetime.date(yr+1, 3, 1)) for yr in range(yearrange[0] - 1, yearrange[1] + 1)]
+        summers = [(datetime.date(yr, 12, 1), datetime.date(yr+1, 3, 1))
+                   for yr in range(yearrange[0] - 1, yearrange[1] + 1)]
         for summ in summers:
             ind1 = x.index(nearest(x, summ[0]))
             ind2 = x.index(nearest(x, summ[1]))
             if y[ind1:ind2]:
-                winter, = plt.plot(x[ind1:ind2], np.ones((ind2-ind1,)) * min(y[ind1:ind2]), 'r-')
+                winter, = plt.plot(x[ind1:ind2],
+                                   np.ones((ind2-ind1,)) * min(y[ind1:ind2]),
+                                   'r-')
 
     def plotIt(self):
         '''
+        Produces the plot.
         '''
         x = self.x
         y = self.y
         miny = min(y) - 1
         maxy = max(y) + 1
-        avgSNR = plt.scatter(x,y, s=0.5)
+        avgSNR = plt.scatter(x, y, s=0.5)
         ax = plt.gca()
         plt.xlabel('Date')
         plt.ylabel('SNR')
         plt.title(self.name + r' $40^{\circ} - 50^{\circ}$ Average L2 SNR')
         ax.set_xlim([x[0], x[-1]])
         ax.set_ylim([miny, maxy])
-        #plt.legend([avgSNR, fit, winter], ['Average SNR', 'Fit', 'Summer Min'], loc='best')
         plt.savefig(self.name+'.eps', format='eps', dpi=1000)
+
 
 def nearest(items, pivot):
     '''
+    Finds the closest item in the list items to the variable pivot.
     '''
     return min(items, key=lambda x: abs(x - pivot))
