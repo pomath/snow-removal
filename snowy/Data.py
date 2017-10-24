@@ -34,6 +34,21 @@ class Data:
                                     stdout=subprocess.PIPE,
                                     stderr=subprocess.STDOUT)
 
+    def getSamprate(self):
+        '''
+        Gets the samprate from the rinex.
+        '''
+        with open(self.dataFile, 'r') as f:
+            for i in range(5):
+                    if i == 2:
+                        tmp1 = f.readline().split()[0]
+                    if i == 3:
+                        tmp2 = f.readline().split()[0]
+                    f.readline()
+        
+        samprate = float(tmp2) - float(tmp1)
+        return samprate
+
     @property
     def makeSats(self):
         '''

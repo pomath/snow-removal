@@ -48,13 +48,13 @@ class Prep:
                                     stderr=subprocess.STDOUT)
 
     def CRX2RNX(self):
-        self.runCRX2RNX = subprocess.run(["./utils/CRX2RNX", "-f",
+        self.runCRX2RNX = subprocess.run(["CRX2RNX", "-f",
                                          self.crxFP],
                                          stdout=subprocess.PIPE,
                                          stderr=subprocess.STDOUT)
 
     def TEQC(self):
-        self.runTEQC = subprocess.run(["./utils/teqc", "+qcq", "+plot",
+        self.runTEQC = subprocess.run(["teqc", "+qcq", "+plot",
                                       self.obsFP],
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.STDOUT)

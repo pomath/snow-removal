@@ -95,3 +95,7 @@ plot_files/
 *.png
 *.eps
 *.pickle
+
+*.pdf
+
+utils/get_data\.sh
